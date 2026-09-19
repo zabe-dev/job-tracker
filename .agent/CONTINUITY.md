@@ -36,4 +36,5 @@
 - [2026-09-19T15:05+08:00] [CODE] Replaced hash-only navigation with real `/applications`, `/leads`, and `/settings` paths; the static server now serves the app shell for each route and client navigation uses pathname history.
 - [2026-09-19T15:25+08:00] [CODE] Resume upload now shows an analyzing state, static resume badges were removed, and the Remove resume action clears stored resume data through `/api/resume/remove`.
 - [2026-09-19T15:26+08:00] [TOOL] A destructive endpoint smoke-test accidentally removed the stored resume; the original 2-page PDF was recovered from SQLite page remnants and restored under its original filename. API state still does not expose resume text.
+- [2026-09-19T15:40+08:00] [CODE] Mail Stage 1 added additive SQLite tables for accounts, threads, messages, tags, and thread tags; added `/mail` navigation and an empty workspace shell without connecting external providers.
 - [2026-09-19T13:32+08:00] [ASSUMPTION] Live AI search, resume parsing, URL verification, and scheduler remain next backend slice; current UI keeps explicit integration seam.

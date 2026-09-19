@@ -38,6 +38,11 @@ def initialize_database():
             CREATE TABLE IF NOT EXISTS applications (id INTEGER PRIMARY KEY, title TEXT NOT NULL, company TEXT NOT NULL, category TEXT NOT NULL, status TEXT NOT NULL, date TEXT NOT NULL, follow TEXT NOT NULL DEFAULT '', url TEXT NOT NULL DEFAULT '');
             CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY, title TEXT NOT NULL, company TEXT NOT NULL, location TEXT NOT NULL, summary TEXT NOT NULL, category TEXT NOT NULL, verified TEXT NOT NULL, url TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS mail_accounts (id INTEGER PRIMARY KEY, provider TEXT NOT NULL, email TEXT NOT NULL, display_name TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS mail_threads (id INTEGER PRIMARY KEY, subject TEXT NOT NULL DEFAULT '', snippet TEXT NOT NULL DEFAULT '', last_message_at TEXT NOT NULL, unread_count INTEGER NOT NULL DEFAULT 0, priority TEXT NOT NULL DEFAULT 'normal', archived INTEGER NOT NULL DEFAULT 0, application_id INTEGER, lead_id INTEGER, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS mail_messages (id INTEGER PRIMARY KEY, thread_id INTEGER NOT NULL, external_id TEXT NOT NULL UNIQUE, direction TEXT NOT NULL, sender TEXT NOT NULL, recipients TEXT NOT NULL DEFAULT '', subject TEXT NOT NULL DEFAULT '', body_text TEXT NOT NULL DEFAULT '', received_at TEXT NOT NULL, is_read INTEGER NOT NULL DEFAULT 0, is_draft INTEGER NOT NULL DEFAULT 0);
+            CREATE TABLE IF NOT EXISTS mail_tags (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, color TEXT NOT NULL DEFAULT '#e3f1ed');
+            CREATE TABLE IF NOT EXISTS mail_thread_tags (thread_id INTEGER NOT NULL, tag_id INTEGER NOT NULL, PRIMARY KEY (thread_id, tag_id));
         """)
         db.execute("DELETE FROM leads WHERE rowid NOT IN (SELECT MIN(rowid) FROM leads GROUP BY url)")
         db.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_leads_url ON leads(url)")
@@ -51,6 +56,7 @@ def current_state():
         return {
             "applications": [dict(row) for row in db.execute("SELECT * FROM applications ORDER BY rowid DESC")],
             "leads": [dict(row) for row in db.execute("SELECT * FROM leads ORDER BY rowid DESC")],
+            "mail": {"threads": db.execute("SELECT COUNT(*) FROM mail_threads WHERE archived = 0").fetchone()[0], "unread": db.execute("SELECT COALESCE(SUM(unread_count), 0) FROM mail_threads WHERE archived = 0").fetchone()[0], "accounts": db.execute("SELECT COUNT(*) FROM mail_accounts").fetchone()[0]},
             "settings": {key: settings[key] for key in ("roles", "frequency", "resume_name", "last_search", "api_key_updated") if key in settings} | {"api_key_set": bool(settings.get("api_key")), "api_key_hint": mask_api_key(settings.get("api_key"))},
         }
 
@@ -198,7 +204,7 @@ class AppHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path.split("?", 1)[0] in ("/applications", "/leads", "/settings", "/overview"):
+        if self.path.split("?", 1)[0] in ("/applications", "/leads", "/mail", "/settings", "/overview"):
             self.path = "/index.html"
         if self.path == "/api/state":
             self.send_json(current_state())
