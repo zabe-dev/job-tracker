@@ -1,7 +1,6 @@
 services:
   jobtracker:
     build: .
-    container_name: jobtracker
     ports:
       - "8000:8000"
     environment:
