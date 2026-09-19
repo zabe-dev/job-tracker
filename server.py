@@ -239,9 +239,11 @@ Use web search. Verify every URL is the exact live company or ATS job posting pa
     try:
         result = subprocess.run(command, input=prompt, text=True, capture_output=True, timeout=120, check=True, env=environment)
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
-        raise ValueError("Codex CLI search failed. Check codex-lb and Codex login.") from error
+        if not api_key:
+            raise ValueError("Codex CLI search failed. Check codex-lb and Codex login.") from error
+        result = None
     text = ""
-    for line in result.stdout.splitlines():
+    for line in (result.stdout if result else "").splitlines():
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
