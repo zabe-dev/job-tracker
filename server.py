@@ -194,10 +194,13 @@ Use web search. Verify every URL is the exact live company or ATS job posting pa
     api_key = setting("api_key")
     if api_key:
         command.extend([
-            "-c",
-            f"model_providers.jobtracker={{ name = 'openai', base_url = '{CODEX_LB_URL}', wire_api = 'responses', env_key = 'CODEX_LB_API_KEY', supports_websockets = true, requires_openai_auth = true }}",
-            "-c",
-            "model_provider='jobtracker'",
+            "-c", 'model_providers.jobtracker.name="openai"',
+            "-c", f'model_providers.jobtracker.base_url="{CODEX_LB_URL}"',
+            "-c", 'model_providers.jobtracker.wire_api="responses"',
+            "-c", 'model_providers.jobtracker.env_key="CODEX_LB_API_KEY"',
+            "-c", "model_providers.jobtracker.supports_websockets=true",
+            "-c", "model_providers.jobtracker.requires_openai_auth=true",
+            "-c", 'model_provider="jobtracker"',
         ])
         environment["CODEX_LB_API_KEY"] = api_key
     command.append("-")
