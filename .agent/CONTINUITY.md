@@ -73,6 +73,8 @@
 - [2026-09-19T17:30+08:00] [CODE] Added Dockerfile with Python runtime, Poppler PDF support, official Codex CLI install, `/data` persistence, healthcheck, and container-safe bind configuration; added `.dockerignore`.
 - [2026-09-19T17:22+08:00] [CODE] Set Dokploy deployment target to `jobtracker.zabe.dev` on container port `8000`; Docker build, container `/api/state` smoke test, JavaScript/Python checks, and diff check pass.
 - [2026-09-19T17:22+08:00] [TOOL] VPS UFW and persistent `SERVER-DOCKER` rules now allow TCP `8000` only from `136.158.62.149`; `docker-firewall.service` active. Public domain currently reaches Cloudflare but returns `404` until Dokploy route is configured.
+- [2026-09-19T18:05+08:00] [CODE] Added HTTP Basic Auth for all Jobtracker UI/API routes, with only `/healthz` unauthenticated for container health checks; Docker deployments fail closed until `JOBTRACKER_AUTH_USER` and `JOBTRACKER_AUTH_PASSWORD` are configured.
+- [2026-09-19T18:05+08:00] [TOOL] Auth checks pass: `/healthz` 200, unauthenticated `/api/state` 401, valid Basic Auth `/api/state` 200. Commit `941b7b3` pushed to `main`.
 
 - [2026-09-19T13:10+08:00] [TOOL] Repo contains only `AGENTS.md`; implementation starts from empty state.
 - [2026-09-19T13:18+08:00] [CODE] Added browser UI, local-storage data model, Python standard-library server, setup docs, and environment placeholder.
