@@ -14,6 +14,8 @@ Open <http://127.0.0.1:8000>.
 
 Deploy this repository as a Dokploy Application using its `Dockerfile`. Set the application port to `8000`, attach a persistent volume at `/data`, and add `jobtracker.zabe.dev` as the domain. The container binds to `0.0.0.0` automatically and stores SQLite data at `/data/jobtracker.db`.
 
+For Docker Compose, run `docker compose up -d --build`. Compose publishes port `8000` and persists Jobtracker data in the `jobtracker-data` volume.
+
 The image includes Poppler for PDF resume extraction and Codex CLI for AI search. Persist `/data/codex` through the same `/data` volume, then configure/login Codex CLI inside the container. The Codex CLI configuration must point to the `codex-lb` service over the shared Docker network, not `127.0.0.1`; for example, use the codex-lb backend endpoint at `http://codex-lb:2455/backend-api/codex` when both services share Dokploy’s Docker network.
 
 Do not expose the Jobtracker container database or Codex state as a public volume. Keep `1455` for codex-lb’s OAuth callback and route the codex-lb domain to port `2455`.

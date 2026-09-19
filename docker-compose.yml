@@ -1,0 +1,17 @@
+services:
+  jobtracker:
+    build: .
+    container_name: jobtracker
+    ports:
+      - "8000:8000"
+    environment:
+      JOBTRACKER_HOST: 0.0.0.0
+      JOBTRACKER_PORT: 8000
+      JOBTRACKER_DB_PATH: /data/jobtracker.db
+      CODEX_HOME: /data/codex
+    volumes:
+      - jobtracker-data:/data
+    restart: unless-stopped
+
+volumes:
+  jobtracker-data:
