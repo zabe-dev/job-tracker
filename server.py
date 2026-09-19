@@ -17,7 +17,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-DB_PATH = ROOT / "northstar.db"
+DB_PATH = ROOT / "jobtracker.db"
 SEARCH_LOCK = threading.Lock()
 
 def db_connection():

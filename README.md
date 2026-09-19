@@ -17,7 +17,7 @@ sudo cp /Users/jaybeza/Desktop/zb/job-tracker/jobtracker /usr/local/bin/jobtrack
 sudo chmod 755 /usr/local/bin/jobtracker
 ```
 
-No package install is required. `requirements.txt` is intentionally empty because the server uses Python's standard library. The first run creates `northstar.db` beside `server.py`.
+No package install is required. `requirements.txt` is intentionally empty because the server uses the Python standard library. The first run creates `jobtracker.db` beside `server.py`. A blank `jobtracker.template.db` is included for repository setup; personal resume and API-key data stays in the ignored local database.
 
 ## Current slice
 

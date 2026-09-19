@@ -1,5 +1,5 @@
-northstar.db
-northstar.db-*
+jobtracker.db
+jobtracker.db-*
 __pycache__/
 .env
 .DS_Store
