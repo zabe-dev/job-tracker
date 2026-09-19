@@ -135,7 +135,7 @@
 }
 
 .drop-zone.analyzing .upload-icon {
-  animation: resume-spin .8s linear infinite;
+  animation: resume-pulse 1.2s ease-in-out infinite;
 }
 
 #resume-status {
@@ -356,8 +356,9 @@
   outline: 0;
 }
 
-@keyframes resume-spin {
-  to { transform: rotate(360deg); }
+@keyframes resume-pulse {
+  0%, 100% { opacity: .72; transform: scale(.96); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
 .status-picker {
