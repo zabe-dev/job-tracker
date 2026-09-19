@@ -5,6 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     JOBTRACKER_HOST=0.0.0.0 \
     JOBTRACKER_PORT=8000 \
     JOBTRACKER_DB_PATH=/data/jobtracker.db \
+    JOBTRACKER_AUTH_REQUIRED=true \
     CODEX_LB_URL=https://codex-lb.zabe.dev/backend-api/codex \
     CODEX_HOME=/data/codex \
     PATH=/root/.local/bin:/root/bin:$PATH
@@ -23,6 +24,6 @@ VOLUME ["/data"]
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD python3 -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/state', timeout=3)"
+  CMD python3 -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"
 
 CMD ["python3", "server.py"]

@@ -16,6 +16,8 @@ Deploy this repository as a Dokploy Application using its `Dockerfile`. Set the 
 
 For Docker Compose, run `docker compose up -d --build`. Compose publishes port `8000` and persists Jobtracker data in the `jobtracker-data` volume.
 
+Set `JOBTRACKER_AUTH_USER` and `JOBTRACKER_AUTH_PASSWORD` in Dokploy environment variables before deploying. All app and API routes require HTTP Basic Auth; only `/healthz` remains public for container health checks. Generate a strong password and do not commit it.
+
 The image includes Poppler for PDF resume extraction and Codex CLI for AI search. Persist `/data/codex` through the same `/data` volume. When a Codex API key is saved in Settings, Jobtracker passes it server-side to Codex CLI and uses `https://codex-lb.zabe.dev/backend-api/codex`.
 
 Do not expose the Jobtracker container database or Codex state as a public volume. Keep `1455` for codex-lb’s OAuth callback and route the codex-lb domain to port `2455`.

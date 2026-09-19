@@ -38,6 +38,9 @@ OUTLOOK_TENANT = os.environ.get("OUTLOOK_TENANT", "common")
 OUTLOOK_REDIRECT_URI = os.environ.get("OUTLOOK_REDIRECT_URI", "http://127.0.0.1:8000/api/outlook/callback")
 OUTLOOK_MAIL_KEYWORDS = tuple(word.strip().lower() for word in os.environ.get("OUTLOOK_MAIL_KEYWORDS", "job,application,interview,recruiter,recruiting,hiring,career,position,role,candidate,resume,cv,offer,follow-up,next steps").split(",") if word.strip())
 CODEX_LB_URL = os.environ.get("CODEX_LB_URL", "http://127.0.0.1:2455/backend-api/codex").rstrip("/")
+AUTH_USER = os.environ.get("JOBTRACKER_AUTH_USER", "")
+AUTH_PASSWORD = os.environ.get("JOBTRACKER_AUTH_PASSWORD", "")
+AUTH_REQUIRED = os.environ.get("JOBTRACKER_AUTH_REQUIRED", "false").lower() in ("1", "true", "yes", "on")
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "")
 OUTLOOK_OAUTH_STATE = None
 
@@ -510,7 +513,33 @@ class AppHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def require_auth(self):
+        if not AUTH_REQUIRED and not (AUTH_USER or AUTH_PASSWORD):
+            return True
+        if not AUTH_USER or not AUTH_PASSWORD:
+            self.send_json({"error": "Jobtracker authentication is not configured."}, 503)
+            return False
+        supplied = self.headers.get("Authorization", "")
+        if supplied.startswith("Basic "):
+            try:
+                decoded = base64.b64decode(supplied[6:], validate=True).decode("utf-8")
+                user, password = decoded.split(":", 1)
+                if hmac.compare_digest(user, AUTH_USER) and hmac.compare_digest(password, AUTH_PASSWORD):
+                    return True
+            except (ValueError, UnicodeDecodeError):
+                pass
+        self.send_response(401)
+        self.send_header("WWW-Authenticate", 'Basic realm="jobtracker"')
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+        return False
+
     def do_GET(self):
+        if self.path.split("?", 1)[0] == "/healthz":
+            self.send_json({"ok": True})
+            return
+        if not self.require_auth():
+            return
         if self.path.split("?", 1)[0] in ("/applications", "/leads", "/inbox", "/settings", "/overview"):
             self.path = "/index.html"
         if self.path == "/api/outlook/connect":
@@ -554,6 +583,8 @@ class AppHandler(SimpleHTTPRequestHandler):
             super().do_GET()
 
     def do_POST(self):
+        if not self.require_auth():
+            return
         if self.path == "/api/emails/inbound":
             supplied = self.headers.get("x-webhook-secret", "")
             if not WEBHOOK_SECRET or not hmac.compare_digest(supplied, WEBHOOK_SECRET):

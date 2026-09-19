@@ -7,6 +7,9 @@ services:
       JOBTRACKER_HOST: 0.0.0.0
       JOBTRACKER_PORT: 8000
       JOBTRACKER_DB_PATH: /data/jobtracker.db
+      JOBTRACKER_AUTH_REQUIRED: ${JOBTRACKER_AUTH_REQUIRED:-true}
+      JOBTRACKER_AUTH_USER: ${JOBTRACKER_AUTH_USER:?Set JOBTRACKER_AUTH_USER in .env}
+      JOBTRACKER_AUTH_PASSWORD: ${JOBTRACKER_AUTH_PASSWORD:?Set JOBTRACKER_AUTH_PASSWORD in .env}
       CODEX_LB_URL: https://codex-lb.zabe.dev/backend-api/codex
       CODEX_HOME: /data/codex
     volumes:
