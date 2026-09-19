@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>jobtracker</title>
+  <rect width="64" height="64" rx="16" fill="#223c3b"/>
+  <path d="M32 9 36.7 27.3 55 32l-18.3 4.7L32 55l-4.7-18.3L9 32l18.3-4.7L32 9Z" fill="#b7e4ce"/>
+  <path d="m32 20 2 10 10 2-10 2-2 10-2-10-10-2 10-2 2-10Z" fill="#f6f7f2"/>
+</svg>

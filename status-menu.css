@@ -105,13 +105,13 @@
   display: none !important;
 }
 
-.mail-empty {
+.inbox-empty {
   max-width: 620px;
   margin: 40px auto;
   text-align: center;
 }
 
-.mail-empty-icon {
+.inbox-empty-icon {
   width: 48px;
   height: 48px;
   margin: 0 auto 16px;
@@ -123,7 +123,7 @@
   font-size: 24px;
 }
 
-.mail-empty p {
+.inbox-empty p {
   max-width: 460px;
   margin: 12px auto 22px;
   color: #66736e;
@@ -141,6 +141,187 @@
 #resume-status {
   color: #7a8580;
   font-size: 11px;
+}
+
+.inbox-status-badge {
+  border-radius: 6px;
+  padding: 8px 11px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inbox-status-badge.ready {
+  color: #257b6b;
+  background: #e3f1ed;
+}
+
+.inbox-status-badge.not-ready {
+  color: #9b6b42;
+  background: #fff2e4;
+}
+
+.outlook-connect-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #0f6cbd;
+  border-radius: 7px;
+  padding: 10px 14px;
+  background: #0f6cbd;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 5px 12px rgba(15, 108, 189, .16);
+}
+
+.sidebar { padding-bottom: 0; }
+
+.server-status {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.server-status:hover,
+.server-status:focus-visible {
+  background: #eef2ed;
+  outline: none;
+}
+
+.server-status .status-dot {
+  width: 9px;
+  height: 9px;
+  margin: 0;
+}
+
+.outlook-connect-button:hover {
+  background: #0b5a9f;
+  border-color: #0b5a9f;
+  transform: translateY(-1px);
+}
+
+.outlook-connect-button:not(.connected) .outlook-icon {
+  animation: outlook-icon-float 2.8s ease-in-out infinite;
+}
+
+.outlook-connect-button:focus-visible {
+  outline: 3px solid rgba(15, 108, 189, .24);
+  outline-offset: 2px;
+}
+
+@keyframes outlook-icon-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+.outlook-connect-button.connected {
+  background: #e8f3fb;
+  border-color: #b8d8ef;
+  color: #0f6cbd;
+  box-shadow: none;
+  cursor: default;
+}
+
+.outlook-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.inbox-grid {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.inbox-side {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.inbox-thread-list {
+  display: grid;
+  gap: 8px;
+}
+
+.inbox-thread-list .empty-state {
+  padding: 24px 12px;
+}
+
+.inbox-thread {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  text-align: left;
+}
+
+.inbox-thread:hover {
+  border-color: #9ccfc1;
+  background: #f2faf7;
+}
+
+.inbox-thread-subject {
+  font-weight: 700;
+}
+
+.inbox-thread-meta,
+.inbox-thread-snippet,
+.inbox-message-meta {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.inbox-thread-snippet {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inbox-thread-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.inbox-tag {
+  border-radius: 5px;
+  color: #52655e;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 7px;
+}
+
+.inbox-thread-detail {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.inbox-message {
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+.inbox-message p {
+  white-space: pre-wrap;
+  line-height: 1.55;
+  margin: 8px 0 0;
+}
+
+@media (max-width: 900px) {
+  .inbox-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 #resume-status.analyzing {
@@ -285,3 +466,38 @@
     transition-duration: .01ms !important;
   }
 }
+
+iconify-icon.ui-icon,
+iconify-icon.nav-icon,
+iconify-icon.search-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  vertical-align: -0.12em;
+}
+
+iconify-icon.nav-icon { width: 18px; height: 18px; color: currentColor; }
+.brand-mark { display: block; width: 24px; height: 24px; }
+.avatar iconify-icon,
+.icon-button iconify-icon,
+.spark iconify-icon,
+.upload-icon iconify-icon,
+.notice-icon iconify-icon,
+.modal-close iconify-icon,
+.role-tag button iconify-icon,
+.remove-api-key iconify-icon,
+.remove-resume iconify-icon { display: block; width: 1em; height: 1em; }
+.avatar iconify-icon { margin: auto; }
+.icon-button { display: grid; place-items: center; padding: 4px; }
+.search-icon { color: var(--muted); font-size: 18px; }
+.status-trigger { display: inline-flex; align-items: center; gap: 8px; }
+.status-trigger .ui-icon,
+.frequency-trigger .ui-icon { font-size: 14px; }
+.frequency-trigger { display: flex; align-items: center; justify-content: space-between; }
+.application-link { display: inline-flex; align-items: center; font-size: 16px; }
+.row-menu { display: inline-grid; place-items: center; padding: 5px; }
+.page-button .ui-icon { font-size: 15px; }
+.remove-resume { width: 34px; height: 34px; padding: 0; border-radius: 50%; }
+.modal-close { display: grid; place-items: center; padding: 4px; }
