@@ -254,6 +254,11 @@
   padding: 24px 12px;
 }
 
+.lead-grid > .empty-state {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
 .inbox-thread {
   display: grid;
   gap: 5px;
