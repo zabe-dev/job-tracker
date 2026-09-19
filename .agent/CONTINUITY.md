@@ -77,6 +77,7 @@
 - [2026-09-19T18:05+08:00] [TOOL] Auth checks pass: `/healthz` 200, unauthenticated `/api/state` 401, valid Basic Auth `/api/state` 200. Commit `941b7b3` pushed to `main`.
 - [2026-09-19T18:12+08:00] [TOOL] codex-lb rejected Jobtracker with `401 Proxy authentication must be configured`; enabled persisted `dashboard_settings.api_key_auth_enabled`, backed up its SQLite store, restarted codex-lb, and verified Codex CLI returned `OK` through `https://codex-lb.zabe.dev/backend-api/codex`.
 - [2026-09-19T18:12+08:00] [CODE] Replaced invalid Codex CLI inline-table override with dotted `-c` overrides, changed sidebar subtitle to `Remote workspace`, and cache-busted status CSS. Deployed search smoke test completed without error; result had zero new leads.
+- [2026-09-19T18:16+08:00] [CODE] Added Codex LB hosted web-search fallback for Docker sandbox failures; commit `633e72f` pushed and deployed. Search now reaches codex-lb, but live verification returned `502` because codex-lb logs show its only upstream account rate-limited for 300 seconds/no available accounts.
 
 - [2026-09-19T13:10+08:00] [TOOL] Repo contains only `AGENTS.md`; implementation starts from empty state.
 - [2026-09-19T13:18+08:00] [CODE] Added browser UI, local-storage data model, Python standard-library server, setup docs, and environment placeholder.
