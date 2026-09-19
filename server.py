@@ -200,6 +200,7 @@ Use web search. Verify every URL is the exact live company or ATS job posting pa
             "-c", 'model_providers.jobtracker.env_key="CODEX_LB_API_KEY"',
             "-c", "model_providers.jobtracker.supports_websockets=true",
             "-c", "model_providers.jobtracker.requires_openai_auth=true",
+            "-c", 'web_search="live"',
             "-c", 'model_provider="jobtracker"',
         ])
         environment["CODEX_LB_API_KEY"] = api_key
