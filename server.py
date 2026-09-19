@@ -37,6 +37,7 @@ OUTLOOK_CLIENT_SECRET = os.environ.get("OUTLOOK_CLIENT_SECRET", "")
 OUTLOOK_TENANT = os.environ.get("OUTLOOK_TENANT", "common")
 OUTLOOK_REDIRECT_URI = os.environ.get("OUTLOOK_REDIRECT_URI", "http://127.0.0.1:8000/api/outlook/callback")
 OUTLOOK_MAIL_KEYWORDS = tuple(word.strip().lower() for word in os.environ.get("OUTLOOK_MAIL_KEYWORDS", "job,application,interview,recruiter,recruiting,hiring,career,position,role,candidate,resume,cv,offer,follow-up,next steps").split(",") if word.strip())
+CODEX_LB_URL = os.environ.get("CODEX_LB_URL", "http://127.0.0.1:2455/backend-api/codex").rstrip("/")
 WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "")
 OUTLOOK_OAUTH_STATE = None
 
@@ -185,8 +186,20 @@ Resume:
 {resume[:12000]}
 
 Use web search. Verify every URL is the exact live company or ATS job posting page, not a job board results page. Do not return postings already tracked in the job tracker. Return JSON only: {{\"leads\":[{{\"title\":\"\",\"company\":\"\",\"location\":\"\",\"summary\":\"\",\"category\":\"\",\"url\":\"\"}}]}}. Return zero leads when no direct open posting can be verified."""
+    command = ["codex", "exec", "--ephemeral", "--skip-git-repo-check", "--json", "--sandbox", "read-only"]
+    environment = os.environ.copy()
+    api_key = setting("api_key")
+    if api_key:
+        command.extend([
+            "-c",
+            f"model_providers.jobtracker={{ name = 'openai', base_url = '{CODEX_LB_URL}', wire_api = 'responses', env_key = 'CODEX_LB_API_KEY', supports_websockets = true, requires_openai_auth = true }}",
+            "-c",
+            "model_provider='jobtracker'",
+        ])
+        environment["CODEX_LB_API_KEY"] = api_key
+    command.append("-")
     try:
-        result = subprocess.run(["codex", "exec", "--ephemeral", "--skip-git-repo-check", "--json", "--sandbox", "read-only", "-"], input=prompt, text=True, capture_output=True, timeout=120, check=True)
+        result = subprocess.run(command, input=prompt, text=True, capture_output=True, timeout=120, check=True, env=environment)
     except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         raise ValueError("Codex CLI search failed. Check codex-lb and Codex login.") from error
     text = ""

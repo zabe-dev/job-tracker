@@ -5,6 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     JOBTRACKER_HOST=0.0.0.0 \
     JOBTRACKER_PORT=8000 \
     JOBTRACKER_DB_PATH=/data/jobtracker.db \
+    CODEX_LB_URL=https://codex-lb.zabe.dev/backend-api/codex \
     CODEX_HOME=/data/codex \
     PATH=/root/.local/bin:/root/bin:$PATH
 

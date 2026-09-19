@@ -16,7 +16,7 @@ Deploy this repository as a Dokploy Application using its `Dockerfile`. Set the 
 
 For Docker Compose, run `docker compose up -d --build`. Compose publishes port `8000` and persists Jobtracker data in the `jobtracker-data` volume.
 
-The image includes Poppler for PDF resume extraction and Codex CLI for AI search. Persist `/data/codex` through the same `/data` volume, then configure/login Codex CLI inside the container. The Codex CLI configuration must point to the `codex-lb` service over the shared Docker network, not `127.0.0.1`; for example, use the codex-lb backend endpoint at `http://codex-lb:2455/backend-api/codex` when both services share Dokploy’s Docker network.
+The image includes Poppler for PDF resume extraction and Codex CLI for AI search. Persist `/data/codex` through the same `/data` volume. When a Codex API key is saved in Settings, Jobtracker passes it server-side to Codex CLI and uses `https://codex-lb.zabe.dev/backend-api/codex`.
 
 Do not expose the Jobtracker container database or Codex state as a public volume. Keep `1455` for codex-lb’s OAuth callback and route the codex-lb domain to port `2455`.
 
@@ -41,4 +41,4 @@ No package install is required. `requirements.txt` is intentionally empty becaus
 - Lead URLs are unique and are not re-added after moving into applications
 - Editable target-role chips (press Enter or Add; remove with ×)
 
-AI search invokes local `codex exec`; Codex CLI uses the running `codex-lb` service at `http://127.0.0.1:2455/v1`. The server keeps stored settings local and never returns the API key to the frontend.
+AI search invokes `codex exec` through codex-lb. The server keeps stored settings local and never returns the API key to the frontend.
