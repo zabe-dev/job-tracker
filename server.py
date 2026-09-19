@@ -38,6 +38,7 @@ OUTLOOK_TENANT = os.environ.get("OUTLOOK_TENANT", "common")
 OUTLOOK_REDIRECT_URI = os.environ.get("OUTLOOK_REDIRECT_URI", "http://127.0.0.1:8000/api/outlook/callback")
 OUTLOOK_MAIL_KEYWORDS = tuple(word.strip().lower() for word in os.environ.get("OUTLOOK_MAIL_KEYWORDS", "job,application,interview,recruiter,recruiting,hiring,career,position,role,candidate,resume,cv,offer,follow-up,next steps").split(",") if word.strip())
 CODEX_LB_URL = os.environ.get("CODEX_LB_URL", "http://127.0.0.1:2455/backend-api/codex").rstrip("/")
+CODEX_LB_INTERNAL_URL = os.environ.get("CODEX_LB_INTERNAL_URL", "http://127.0.0.1:2455/backend-api/codex").rstrip("/")
 AUTH_USER = os.environ.get("JOBTRACKER_AUTH_USER", "")
 AUTH_PASSWORD = os.environ.get("JOBTRACKER_AUTH_PASSWORD", "")
 AUTH_REQUIRED = os.environ.get("JOBTRACKER_AUTH_REQUIRED", "false").lower() in ("1", "true", "yes", "on")
@@ -178,6 +179,36 @@ def run_ai_search():
     finally:
         SEARCH_LOCK.release()
 
+def codex_lb_web_search(prompt, api_key):
+    payload = json.dumps({
+        "model": os.environ.get("CODEX_LB_MODEL", "gpt-5.6-luna"),
+        "input": prompt,
+        "tools": [{"type": "web_search_preview"}],
+    }).encode()
+    request = urllib.request.Request(
+        f"{CODEX_LB_INTERNAL_URL}/responses",
+        data=payload,
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(request, timeout=120) as response:
+        raw = response.read().decode("utf-8", "replace")
+    if raw.lstrip().startswith("{"):
+        body = json.loads(raw)
+        return body.get("output_text", "")
+    text = ""
+    for line in raw.splitlines():
+        if not line.startswith("data: "):
+            continue
+        try:
+            event = json.loads(line[6:])
+        except json.JSONDecodeError:
+            continue
+        if event.get("type") == "response.output_text.delta":
+            text += event.get("delta", "")
+        elif event.get("type") == "response.output_text.done":
+            text = event.get("text", text)
+    return text
+
 def _run_ai_search_locked():
     resume = setting("resume_text")
     roles = setting("roles")
@@ -219,6 +250,9 @@ Use web search. Verify every URL is the exact live company or ATS job posting pa
         if event.get("type") == "item.completed" and item.get("type") == "agent_message":
             text = item.get("text", "")
     match = re.search(r"\{.*\}", text, re.DOTALL)
+    if api_key and (not match or not json.loads(match.group(0)).get("leads", [])):
+        text = codex_lb_web_search(prompt, api_key)
+        match = re.search(r"\{.*\}", text, re.DOTALL)
     if not match:
         raise ValueError("AI returned no structured job results.")
     leads = json.loads(match.group(0)).get("leads", [])
